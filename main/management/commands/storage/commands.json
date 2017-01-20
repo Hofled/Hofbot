@@ -1,0 +1,66 @@
+{
+    "hofcoins": {
+        "name": "hofcoins",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "casino": true,
+        "cooldown": true
+    },
+    "setcooldown": {
+        "name": "setcooldown",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "bot-settings": true,
+        "cooldown": false
+    },
+    "gamblecooldown": {
+        "name": "gamblecooldown",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "bot-settings": true,
+        "cooldown": false
+    },
+    "add": {
+        "name": "add",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+    },
+    "remove": {
+        "name": "remove",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+    },
+    "update": {
+        "name": "update",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+    },
+    "commands": {
+        "name": "commands",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "log": true,
+        "cooldown": false
+    },
+    "gamble": {
+        "name": "gamble",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "casino": true,
+        "cooldown": true
+    }
+}
