@@ -3,6 +3,8 @@ A twitch.tv chat bot.
 
 Hofbot is written in Typescript and uses tmi.js API to integrate with the twitch.tv chat.
 
+Even though the bot shows example configurations with an account under the name "Hofbot", it is not required to be called like that, but can run over any twitch.tv account (using the given authentication key).
+
 The bot has been designed with the thought in mind of it being hosted on a Raspberry pi, altough it can run over any computer and function the same way.
 
 The bot is still in the making and is in its early-versions.
