@@ -1,4 +1,4 @@
-# Hofbot
+# Hofbot [![](https://pbs.twimg.com/profile_images/608652049169850369/Zql9-5sX_normal.png)](https://twitch.tv)
 A twitch.tv chat bot.
 
 Hofbot is written in Typescript and uses tmi.js API to integrate with the twitch.tv chat.
@@ -16,6 +16,8 @@ To start development using the bot, you would need `nodejs` installed on your ma
 
 After you have those installed, open the project's folder and run the console command: `npm install` .
 This will install the required packages and compiling tools to start develop and run the bot.
+
+To run the bot, simply type out the command `npm start`.
 
 ## Twitch account
 A twitch account is required to run the bot over (www.twitch.tv).
