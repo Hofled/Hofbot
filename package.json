@@ -5,8 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build & npm run initialize",
-    "build": "tsc",
+    "start": "tsc & npm run initialize",
+    "dev-compile": "tsc -w",
     "initialize": "node ./main/main.js"
   },
   "author": "Hofled",
