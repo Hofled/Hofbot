@@ -11,7 +11,7 @@ export class FileHandler {
             jsonfile.writeFileSync(filePath, object, options);
         }
         catch (err) {
-            console.log('error in writing to ' + filePath + ": already exists");
+            console.log('error in writing to ' + filePath);
         }
     }
 
