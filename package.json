@@ -1,13 +1,13 @@
 {
   "name": "Hofbot",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "A twitch bot for pseudo currency with multi-functions",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc & npm run initialize",
-    "dev-compile": "tsc -w",
-    "initialize": "node ./main/main.js"
+    "init": "tsc & npm run serve",
+    "watch-build": "tsc -w",
+    "serve": "node ./main/main.js"
   },
   "author": "Hofled",
   "license": "ISC",
