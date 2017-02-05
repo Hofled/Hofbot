@@ -19,39 +19,39 @@ export class CasinoManager {
         this.slotMachineManager = new SlotMachineManager();
     }
     /**Gives every user currently in the chat currency*/
-    giveAllCurrency(channel: string, users: any, amount: number, currencyType: string, displayMessage: boolean) {
-        let promise = this.userManager.getCurrentViewers(channel);
+    giveAllCurrency(channelName: string, amount: number, currencyType: string, displayMessage: boolean) {
+        let promise = this.userManager.getCurrentViewers(channelName);
         promise.then((viewersObj) => {
             for (let viewerType in viewersObj) {
                 for (let viewer of viewersObj[viewerType]) {
-                    let user = this.changeUserCurrency(viewer, channel, amount, users, currencyType);
-                    users[viewer] = user;
+                    this.changeUserCurrency(viewer, channelName, amount, currencyType);
                 }
             }
-
-            this.userManager.updateUsersFile(users, channel);
         })
     }
 
-    gambleCurrency(channelName: string, userName: string, users: any, amount: number, currencyType: string): string {
+    gambleCurrency(channelName: string, userName: string, amount: number, currencyType: string): string {
         // Remove the amount the user is gambling and put it
-        let gambler = this.changeUserCurrency(userName, channelName, -amount, users, currencyType);
+        this.changeUserCurrency(userName, channelName, -amount, currencyType);
         let gambleResult = this.slotMachineManager.gamble(amount);
+        this.changeUserCurrency(userName, channelName, gambleResult.gambleOutcome, currencyType);
 
-        gambler = this.changeUserCurrency(userName, channelName, gambleResult.gambleValue, users, currencyType);
+        let gambler = this.userManager.getUser(userName);
         gambler.data.gambling["last-gamble-time"] = moment();
 
-        users[userName] = gambler;
-
-        this.userManager.updateUsersFile(users, channelName);
+        this.userManager.updateUserData(userName, gambler.data);
 
         return this.getGambleMessage(amount, gambleResult, gambler, currencyType);
+    }
+
+    private updateGambleTime(gamblerName: string, time: moment.Moment) {
+        this.userManager.updateUserData
     }
 
     getGambleMessage(gambleAmout: number, result: GambleData, gambler: User, currencyType: string): string {
         let message = gambler.data["display-name"] + " gambled " + gambleAmout + " " + currencyType + " and got a result of " + result.gambleResult + ".";
         if (result.win) {
-            message += "\n You won " + result.gambleValue + " " + currencyType + " and now have " + gambler.data.currencies[currencyType].amount;
+            message += "\n You won " + result.gambleOutcome + " " + currencyType + " and now have " + gambler.data.currencies[currencyType].amount;
         }
         else {
             message += "\n You lost 😔" + currencyType + " count: " + gambler.data.currencies[currencyType].amount;
@@ -59,62 +59,36 @@ export class CasinoManager {
         return message;
     }
 
-    getUserCurrency(userName: string, channelName: string, users: any, currencyType: string): number {
-        let user = this.userManager.getUser(userName, users);
-
+    getUserCurrency(userName: string, channelName: string, currencyType: string): number {
+        let user = this.userManager.getUser(userName);
         if (!(currencyType in user.data.currencies)) {
-            user.data.currencies[currencyType] = new CurrencyData(currencyType, 0, channelName);
-            users[userName] = user;
-            this.userManager.updateUsersFile(users, channelName);
+            user.data.currencies[currencyType] = new CurrencyData(0, channelName);
+            this.userManager.updateUserData(userName, user.data);
         }
 
-        return user.data.currencies[currencyType].amount;
+        return this.userManager.getUser(userName).data.currencies[currencyType].amount;
     }
 
-    /**Gives a user a certain amount of alkcoins and returns it (negative amount reduces)*/
-    changeUserCurrency(userName: string, channelName: string, amount: number, users: any, currencyType: string): User {
-        let user: User;
-        user = this.userManager.getUser(userName, users);
-
+    /**Gives a user a certain amount of currency (negative amount reduces)*/
+    changeUserCurrency(userName: string, channelName: string, amount: number, currencyType: string) {
+        let user = this.userManager.getUser(userName);
         if (!(currencyType in user.data.currencies)) {
-            user.data.currencies[currencyType] = new CurrencyData(currencyType, 0, channelName);
+            user.data.currencies[currencyType] = new CurrencyData(0, channelName);
         }
-
         user.data.currencies[currencyType].amount += amount;
-        return user;
+        this.userManager.updateUserData(userName, user.data);
     }
 
     /**Starts the currency interval in the specified channels*/
-    startCurrencyInterval(channels: string[]) {
-        let settings = this.settingsManager.readBotSettingsSync();
-        let currencySettings: CurrencySettingsData[] = [];
+    startCurrencyInterval(channelName: string) {
+        let settings = this.settingsManager.getBotSettings();
 
-        // Unwarpped the # from the channel names
-        channels = channels.map((channel) => channel.substr(1));
+        let channelCurrency = this.settingsManager.getChannelCurrency(channelName, settings);
 
-        channels.forEach((channel) => this.settingsManager.getChannelCurrencies(channel, settings)
-            .forEach((channelSettings) => {
-                currencySettings.push(channelSettings);
-            }));
+        let id = setInterval(() => {
+            this.giveAllCurrency(channelName, channelCurrency["amount-per-interval"], channelCurrency.name, false);
+        }, channelCurrency.interval)
 
-        for (let currencyObj of currencySettings) {
-            let id = setInterval(() => {
-                for (let channel of this.getConnectedCurrencyChannels(currencyObj, channels)) {
-                    let users = this.userManager.getLatestUsers(channel);
-                    this.giveAllCurrency(channel, users, currencyObj["amount-per-interval"], currencyObj.name, false);
-                }
-            }, currencyObj.interval)
-
-            this.currencyIntervals.push(id);
-        }
-    }
-
-    /**Returns only the channels which are configured to have the passed currency in their channel*/
-    private getConnectedCurrencyChannels(settings: CurrencySettingsData, channels: string[]): string[] {
-        return channels.filter((channel) => {
-            if (settings.channels.indexOf(channel) !== -1) {
-                return channel;
-            }
-        });
+        this.currencyIntervals.push(id);
     }
 }

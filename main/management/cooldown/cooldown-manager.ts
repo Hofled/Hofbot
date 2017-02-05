@@ -9,14 +9,14 @@ export class CooldownManager {
 
     constructor(settingsManager: SettingsManager, channels: string[]) {
         this.settingsManager = settingsManager;
-        this.botSettings = this.settingsManager.readBotSettingsSync();
+        this.botSettings = this.settingsManager.getBotSettings();
         this.channelsLastCommand = {};
         this.initLastCommandTimes(channels);
         this.registerSettingsChange();
     }
 
     registerSettingsChange() {
-        this.settingsManager.settingsChanged.on('settings-changed', (newSettings: BotSettings) => {
+        this.settingsManager.settingsEmitter.on('settings-changed', (newSettings: BotSettings) => {
             this.botSettings = newSettings;
         });
     }

@@ -8,3 +8,4 @@ export * from "./bot-settings-def";
 export * from "./currency-settings-data";
 export * from "./currency-data";
 export * from "./gamble-data";
+export * from "./channel";

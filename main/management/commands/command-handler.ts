@@ -3,10 +3,11 @@ import { MessageSender, MessageBuilder } from '../../functionality/messages/inde
 import { InputParser, InputValidator } from '../../functionality/input/index';
 import { CommandManager, CommandTasker } from '../../management/commands/index';
 import { SettingsManager } from '../../bot-settings/index';
-import { FileHandler } from '../../functionality/files/index';
+import { DataBaseManager } from '../../functionality/db/index';
 import { CasinoManager } from '../casino/casino-manager';
 import { CooldownManager } from '../cooldown/cooldown-manager';
 import { PermissionValidator } from '../../functionality/permissions/index';
+import { UserManager } from '../users/user-manager';
 
 export class CommandHandler {
     private inputParser: InputParser;
@@ -14,17 +15,17 @@ export class CommandHandler {
     private permissionsValidator: PermissionValidator;
     private commandManager: CommandManager;
     private cooldownManager: CooldownManager;
-    private commandProcessor: CommandTasker;
+    private commandTasker: CommandTasker;
     private messageSender: MessageSender;
 
-    constructor(messageSender: MessageSender, messageBuilder: MessageBuilder, fileHandler: FileHandler, settingsManager: SettingsManager, casinoManager: CasinoManager, cooldownManager: CooldownManager, permissionValidator: PermissionValidator) {
+    constructor(messageSender: MessageSender, messageBuilder: MessageBuilder, settingsManager: SettingsManager, casinoManager: CasinoManager, cooldownManager: CooldownManager, permissionValidator: PermissionValidator, userManager: UserManager) {
         this.permissionsValidator = permissionValidator;
         this.messageSender = messageSender;
         this.inputParser = new InputParser();
         this.inputValidator = new InputValidator();
-        this.commandManager = new CommandManager(this.inputValidator, fileHandler);
+        this.commandManager = new CommandManager(this.inputValidator);
         this.cooldownManager = cooldownManager;
-        this.commandProcessor = new CommandTasker(this.cooldownManager, this.commandManager, this.messageSender, messageBuilder, fileHandler, casinoManager, settingsManager);
+        this.commandTasker = new CommandTasker(this.cooldownManager, this.commandManager, this.messageSender, messageBuilder, casinoManager, settingsManager, userManager);
     }
 
     handleMessage(data: MessageData) {
@@ -33,12 +34,12 @@ export class CommandHandler {
 
         let commandName = this.inputParser.getCommandName(data.message);
         let commandsObj = this.commandManager.getLatestCommands();
-        let command = this.commandManager.getCommandData(commandName, commandsObj);
+        let command = this.commandManager.getCommandData(commandName);
 
         if (command == false) return;
         command = command as CommandData;
 
-        if (!this.permissionsValidator.checkPermission(data.userState.username, data.channelName, command.permission)) {
+        if (!this.permissionsValidator.checkPermission(data.userState.username, command.permission)) {
             this.messageSender.sendMessage(data.channelName, "Insufficient permissions.");
             this.cooldownManager.resetLastCommandTime(data.messageTime, data.channelName);
             return;
@@ -49,6 +50,6 @@ export class CommandHandler {
 
         let params = this.inputParser.getCommandParams(data.message);
 
-        this.commandProcessor.taskCommand(command, data, params);
+        this.commandTasker.taskCommand(command, data, params);
     }
 }

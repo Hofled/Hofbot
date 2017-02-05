@@ -18,22 +18,19 @@ export class CommandCRUDExecuter implements IExecuter {
     execute(command: CommandData, msgData: MessageData, params?: any[]) {
         switch (command.name) {
             case 'add': {
-                let commnads = this.commandManager.getLatestCommands();
-                let result = this.commandManager.addCommand(params[0], params.slice(1, params.length).join(' '), commnads);
+                let result = this.commandManager.addCommand(params[0], params.slice(1, params.length).join(' '));
                 this.messageSender.sendMessage(msgData.channelName, result);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;
             }
             case 'remove': {
-                let commnads = this.commandManager.getLatestCommands();
-                let result = this.commandManager.delCommand(params[0], commnads);
+                let result = this.commandManager.delCommand(params[0]);
                 this.messageSender.sendMessage(msgData.channelName, result);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;
             }
             case 'update': {
-                let commnads = this.commandManager.getLatestCommands();
-                let result = this.commandManager.updateCommand(params[0], params.slice(1, params.length).join(' '), commnads);
+                let result = this.commandManager.updateCommand(params[0], params.slice(1, params.length).join(' '));
                 this.messageSender.sendMessage(msgData.channelName, result);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;

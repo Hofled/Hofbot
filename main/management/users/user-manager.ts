@@ -1,23 +1,25 @@
 import * as http from 'http';
+import * as lowdb from 'lowdb';
 import { Observable } from 'rxjs';
+
 import { UserData } from '../../definitions/user-data';
 import { User } from '../users/user';
-import { FileHandler } from '../../functionality/files/index';
+import { DataBaseManager } from '../../functionality/db/index';
 
 export class UserManager {
-    private fileHandler: FileHandler;
+    private dbManager: DataBaseManager;
     private readonly usersFile: string = 'main/management/users/storage/users_';
 
-    constructor(fileHandler: FileHandler) {
-        this.fileHandler = fileHandler;
+    constructor(channelName: string) {
+        this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
     }
 
-    getUser(userName: string, users: any): User {
-        if (!this.checkUserExists(userName, users)) {
+    getUser(userName: string): User {
+        if (!this.checkUserExists(userName)) {
             return new User(new UserData(userName));
         };
 
-        return users[userName.toLowerCase()];
+        return this.dbManager.findValue<User>('users', (user) => user[userName] !== undefined);
     }
 
     getCurrentViewers(channel: string): Promise<{}> {
@@ -35,20 +37,20 @@ export class UserManager {
         });
     }
 
-    updateUsersFile(users: any, channelName: string) {
-        this.fileHandler.writeObjToFileSync(users, this.usersFile + channelName + '.json');
+    userHasValue(userField: string, userName: string): boolean {
+        return this.dbManager.checkHas(userField, { parentKey: 'users', predicate: (user) => user[userName] !== undefined });
     }
 
-    getLatestUsers(channelName: string): any {
-        return this.fileHandler.readFileSync(this.usersFile + channelName + '.json');
+    /** Updates the user data entry in the db with the passed user data */
+    updateUserData(userName: string, userData: UserData) {
+        this.dbManager.assignValue('users', (userItem) => userItem[userName] !== undefined, { userName: { data: userData } });
     }
 
-    private checkUserExists(userName: string, users: any): boolean {
-        return (userName in users);
+    getAllUsers(): any {
+        return this.dbManager.getEntireDB();
     }
 
-    /**Generates a new json file for tracking in the spcecific channel, only if the file does not exist already*/
-    genNewChannelUsers(channel: string) {
-        this.fileHandler.writeObjToFileSync({}, this.usersFile + channel + '.json', true)
+    private checkUserExists(userName: string): boolean {
+        return this.dbManager.checkHas(userName, { parentKey: 'users', predicate: (userItem) => userItem[userName] !== undefined });
     }
 }

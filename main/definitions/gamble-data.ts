@@ -1,11 +1,11 @@
 export class GambleData {
     win: boolean;
-    gambleValue: number;
+    gambleOutcome: number;
     gambleResult: number;
 
-    constructor(didWin: boolean, gambleValue: number, gambleResult: number) {
+    constructor(didWin: boolean, gambleOutcome: number, gambleResult: number) {
         this.win = didWin;
-        this.gambleValue = gambleValue;
+        this.gambleOutcome = gambleOutcome;
         this.gambleResult = gambleResult;
     }
 }

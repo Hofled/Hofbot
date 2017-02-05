@@ -2,7 +2,7 @@ import { CommandData, MessageData } from '../../definitions/index';
 import { MessageBuilder, MessageSender } from '../../functionality/messages/index';
 import { CommandManager, CommandCRUDExecuter } from '../commands/index';
 import { UserManager } from '../users/user-manager';
-import { FileHandler } from '../../functionality/files/index';
+import { DataBaseManager } from '../../functionality/db/index';
 import { CasinoExecuter, CasinoManager } from '../casino/index';
 import { LoggerExecuter } from '../../functionality/logging/index';
 import { SettingsExecuter, SettingsManager } from '../../bot-settings/index';
@@ -16,11 +16,10 @@ export class CommandTasker {
     private loggerExecuter: LoggerExecuter;
     private settingsExecuter: SettingsExecuter;
 
-    constructor(cooldownManager: CooldownManager, commandManager: CommandManager, messageSender: MessageSender, messageBuiler: MessageBuilder, fileHandler: FileHandler, casinoManager: CasinoManager, settingsManager: SettingsManager) {
+    constructor(cooldownManager: CooldownManager, commandManager: CommandManager, messageSender: MessageSender, messageBuiler: MessageBuilder, casinoManager: CasinoManager, settingsManager: SettingsManager, userManager: UserManager) {
         this.cooldownManager = cooldownManager;
         this.messageSender = messageSender;
         let messageBuilder = new MessageBuilder();
-        let userManager = new UserManager(fileHandler);
         this.casinoExecuter = new CasinoExecuter(casinoManager, this.messageSender, messageBuiler, this.cooldownManager, userManager);
         this.commandCRUDExecuter = new CommandCRUDExecuter(commandManager, this.messageSender, this.cooldownManager);
         this.loggerExecuter = new LoggerExecuter(this.messageSender, this.cooldownManager, commandManager);

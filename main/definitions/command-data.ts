@@ -1,8 +1,7 @@
 export class CommandData {
+    name: string;
     /**The permission level required to execute this command */
     permission: number;
-    /**The name of the command */
-    name: string;
     /**The content of the command */
     content: string;
     /**A flag that indicates whether a command needs to go through extra processing or not*/
@@ -20,9 +19,9 @@ export class CommandData {
     /**A flag that defines if a command is affected by cooldown*/
     cooldown: boolean;
 
-    constructor(permission: number = 1, name: string, content: string, internal: boolean = false, native: boolean = false, botSettings: boolean = false, casino: boolean = false, commandCrud: boolean = false, isLog: boolean = false, cooldown: boolean = true) {
-        this.permission = permission;
+    constructor(permission: number = 1, name: string, content?: string, internal: boolean = false, native: boolean = false, botSettings: boolean = false, casino: boolean = false, commandCrud: boolean = false, isLog: boolean = false, cooldown: boolean = true) {
         this.name = name;
+        this.permission = permission;
         this.content = content;
         this.internal = internal;
         this.native = native;

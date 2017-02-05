@@ -23,8 +23,7 @@ export class CasinoExecuter implements IExecuter {
     execute(command: CommandData, msgData: MessageData, params?: any[]) {
         switch (command.name) {
             case 'hofcoins': {
-                let users = this.userManager.getLatestUsers(msgData.channelName);
-                let coins = this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, users, "hofcoins");
+                let coins = this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, "hofcoins");
                 let msg = this.messageBuilder.formatMessage("%n has %n hofcoins.", [msgData.userState.username, coins]);
                 this.messageSender.sendMessage(msgData.channelName, msg);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
@@ -33,11 +32,10 @@ export class CasinoExecuter implements IExecuter {
             case 'gamble': {
                 // Currently only supports gambling of hofcoins
                 let currencyType = "hofcoins";
-                let users = this.userManager.getLatestUsers(msgData.channelName);
-                let gambler = this.userManager.getUser(msgData.userState.username, users);
+                let gambler = this.userManager.getUser(msgData.userState.username);
 
                 if (!this.cooldownManager.canGamble(msgData.messageTime, gambler.data.gambling["last-gamble-time"])) {
-                    let msg = this.messageBuilder.formatMessage("%n you can only gamble every %n seconds.", [gambler.data["display-name"], this.cooldownManager.getGambleCooldown()]);
+                    let msg = this.messageBuilder.formatMessage("%n you can only gamble every %n seconds.", [msgData.userState.username, this.cooldownManager.getGambleCooldown()]);
                     this.messageSender.sendMessage(msgData.channelName, msg);
                     this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                     break;
@@ -50,13 +48,13 @@ export class CasinoExecuter implements IExecuter {
                     break;
                 }
 
-                if (this.casinoManager.getUserCurrency(gambler.data["display-name"], msgData.channelName, users, currencyType) < gambleAmount) {
+                if (this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, currencyType) < gambleAmount) {
                     let message = gambler.data["display-name"] + " - You do not have a sufficient currency count to gamble.";
                     this.messageSender.sendMessage(msgData.channelName, message);
                     break;
                 }
 
-                let gambleResult = this.casinoManager.gambleCurrency(msgData.channelName, msgData.userState.username, users, gambleAmount, currencyType);
+                let gambleResult = this.casinoManager.gambleCurrency(msgData.channelName, msgData.userState.username, gambleAmount, currencyType);
                 this.messageSender.sendMessage(msgData.channelName, gambleResult);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;
