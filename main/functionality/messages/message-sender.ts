@@ -20,4 +20,9 @@ export class MessageSender {
     sendMessage(channelName: string, message: string) {
         this.client.say(channelName, message);
     }
+
+    /**Sends a whisper to the specified user */
+    sendWhisper(userName: string, message: string) {
+        this.client.whisper(userName, message);
+    }
 }

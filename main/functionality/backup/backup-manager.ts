@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import * as path from 'path';
 
 export class BackupManager {
     private readonly backupFolder: string = "backups/";
@@ -20,9 +19,14 @@ export class BackupManager {
                 return;
             }
             let regex = new RegExp("/^\." + fileExtension + "$/");
-            list.map((file) => regex.test(file) ? file : null)
+            list.map((file) => regex.test(file) ? file : null);
             list.forEach((file) => {
-                fs.createReadStream(folder + "/" + file).pipe(fs.createWriteStream(this.backupFolder + file));
+                try {
+                    fs.createReadStream(folder + "/" + file).pipe(fs.createWriteStream(this.backupFolder + "backup_" + file));
+                }
+                catch (err) {
+                    console.log(err);
+                }
             })
         })
     }

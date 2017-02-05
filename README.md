@@ -21,3 +21,14 @@ To run the bot, simply type out the command `npm start`.
 
 ## Twitch account
 A twitch account is required to run the bot over (www.twitch.tv).
+
+## Known issues
+Before running the bot, it is important to note out a few issues on behalf of twitch's end, which will hopefully get resolved in the near future.
+
+Although those issues are not major and prevent the bot from functioning, it is important to be aware of them:
+
+### Bot whisper shadow bans / blacklists
+Twitch monitors whispers sent through their servers and recognizes suspicious activity such as bot whispers.
+They prevent, after detecting an account as a bot, to get their whispers through the servers, there is no error message sending the whisper itself, but the server "swallows" the whisper and does not get it to the other end.
+
+If whispering is something you want to have you bot being capable of doing, you would have to contact twitch's support team and ask them to manually whitelist the bot's account (I have done so myself and it is a very simple process).
