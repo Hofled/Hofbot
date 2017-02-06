@@ -16,7 +16,9 @@ export class UserManager {
 
     getUser(userName: string): User {
         if (!this.checkUserExists(userName)) {
-            return new User(new UserData(userName));
+            let newUser = new User(new UserData(userName));
+            this.dbManager.pushValue('users', newUser);
+            return newUser;
         };
 
         return this.dbManager.findValue<User>('users', (user) => user[userName] !== undefined);
@@ -37,10 +39,6 @@ export class UserManager {
         });
     }
 
-    userHasValue(userField: string, userName: string): boolean {
-        return this.dbManager.checkHas(userField, { parentKey: 'users', predicate: (user) => user[userName] !== undefined });
-    }
-
     /** Updates the user data entry in the db with the passed user data */
     updateUserData(userName: string, userData: UserData) {
         this.dbManager.assignValue('users', (userItem) => userItem[userName] !== undefined, { userName: { data: userData } });
@@ -51,6 +49,6 @@ export class UserManager {
     }
 
     private checkUserExists(userName: string): boolean {
-        return this.dbManager.checkHas(userName, { parentKey: 'users', predicate: (userItem) => userItem[userName] !== undefined });
+        return this.dbManager.findValue('users', (user) => { user[userName] !== undefined }) !== undefined;
     }
 }

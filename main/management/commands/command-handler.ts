@@ -33,7 +33,6 @@ export class CommandHandler {
         if (!this.inputValidator.isValidCommand(data.message)) return;
 
         let commandName = this.inputParser.getCommandName(data.message);
-        let commandsObj = this.commandManager.getLatestCommands();
         let command = this.commandManager.getCommandData(commandName);
 
         if (command == false) return;

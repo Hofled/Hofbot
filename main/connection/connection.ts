@@ -59,10 +59,11 @@ export class BotConnection {
     }
 
     private listenToConnection(channels: Channel[]) {
+
         this.client.on("message", function (channel, userstate, message, self) {
 
             let messageData = new MessageData(channel, userstate, message, self);
-
+            
             if (messageData.self) return;
 
             switch (messageData.userState.messageType) {

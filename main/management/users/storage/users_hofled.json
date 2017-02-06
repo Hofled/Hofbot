@@ -1,22 +1,22 @@
 {
-    "users": [
-        {
-            "hofled": {
-                "data": {
-                    "display-name": "hofled",
-                    "currencies": {
-                        "hofcoins": {
-                            "name": "hofcoins",
-                            "amount": 0,
-                            "channel": "hofled"
-                        }
-                    },
-                    "permission": 1,
-                    "gambling": {
-                        "last-gamble-time": null
-                    }
-                }
+  "users": [
+    {
+      "hofled": {
+        "data": {
+          "display-name": "hofled",
+          "currencies": {
+            "hofcoins": {
+              "name": "hofcoins",
+              "amount": 0,
+              "channel": "hofled"
             }
+          },
+          "permission": 1,
+          "gambling": {
+            "last-gamble-time": null
+          }
         }
-    ]
+      }
+    }
+  ]
 }

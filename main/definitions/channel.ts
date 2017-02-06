@@ -19,6 +19,7 @@ export class Channel {
     private userManager: UserManager;
 
     constructor(name: string, client: tmi.client, tmiOptions: TmiOptions, settingsManager: SettingsManager, cooldownManager: CooldownManager) {
+        this.name = name;
         this.messageSender = new MessageSender(client, tmiOptions);
         this.messageBuilder = new MessageBuilder();
         this.userManager = new UserManager(name);

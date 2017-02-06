@@ -15,7 +15,7 @@ export class DataBaseManager {
      * @param {any} value the key and value to set in the specified entry, can use the format: {objectKey: newValue}
      */
     assignValue(arrayPath: string, predicate: any, value: any) {
-        this.db.get(arrayPath).find(predicate).assign(value);
+        this.db.get(arrayPath).find(predicate).assign(value).value();
     }
 
     /** Removes all objects that satisfy the predicate value from the specified fieldPath,
@@ -36,14 +36,9 @@ export class DataBaseManager {
     }
 
     /** Checks if the specified field exists in the db. 
-     * @param {?string} arrayQueuery search a parent array type entry  which contains the fieldPath
      * @param {string} fieldPath the field to check using the dot notation such as: key.subkey
     */
-    checkHas(fieldPath: string, arrayQueuery?: { parentKey: string, predicate: any }): boolean {
-        if (arrayQueuery) {
-            return this.db.get(arrayQueuery.parentKey).find(arrayQueuery.predicate).hasIn(fieldPath).value<boolean>();
-        }
-
+    checkHas(fieldPath: string): boolean {
         return this.db.hasIn(fieldPath).value<boolean>();
     }
     

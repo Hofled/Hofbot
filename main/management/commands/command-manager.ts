@@ -79,7 +79,7 @@ export class CommandManager {
 
     /**Checks if a command exists.*/
     private checkCommandExists(commandName: string, arrayQueuery: { parentKey: string, predicate: any }): boolean {
-        return this.dbManager.checkHas(commandName, arrayQueuery);
+        return this.dbManager.findValue(this.commandsDbKey, { name: commandName }) !== undefined;
     }
 
     getLatestCommands(): any {
