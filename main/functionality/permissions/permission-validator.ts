@@ -8,8 +8,7 @@ export class PermissionValidator {
     }
 
     checkPermission(userName: string, requiredPermission: number) {
-        let user = this.userManager.getUser(userName);
-
-        return user.data.permission >= requiredPermission;
+        let userData = this.userManager.getUserData(userName);
+        return userData.permission >= requiredPermission;
     }
 }

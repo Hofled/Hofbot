@@ -35,11 +35,11 @@ export class BotConnection {
         let cooldownManager = new CooldownManager(settingsManager, this.tmiOptions.channels);
         this.backupManager = new BackupManager();
 
+        this.generateChannels(this.client, this.tmiOptions, settingsManager, cooldownManager);
+
         this.welcomeMessage = messageBuilder.formatMessage(this.welcomeMessage, [this.tmiOptions.identity.username]);
 
         this.backupManager.startBackupInterval(1800, "main/management/users/storage", "json");
-
-        this.generateChannels(this.client, this.tmiOptions, settingsManager, cooldownManager);
 
         // Starting to listen on messages received in the chats the client is connected to.
         this.listenToConnection(this.channels);
@@ -53,8 +53,8 @@ export class BotConnection {
 
     private generateChannels(client: tmi.client, tmiOptions: TmiOptions, settingsManager: SettingsManager, cooldownManager: CooldownManager) {
         tmiOptions.channels.forEach(channel => {
-            this.channels.push(new Channel(channel.substr(1), client, this.tmiOptions, settingsManager, cooldownManager));
             this.genChannelDB(channel, tmiOptions);
+            this.channels.push(new Channel(channel.substr(1), client, this.tmiOptions, settingsManager, cooldownManager));
         });
     }
 
@@ -63,7 +63,7 @@ export class BotConnection {
         this.client.on("message", function (channel, userstate, message, self) {
 
             let messageData = new MessageData(channel, userstate, message, self);
-            
+
             if (messageData.self) return;
 
             switch (messageData.userState.messageType) {

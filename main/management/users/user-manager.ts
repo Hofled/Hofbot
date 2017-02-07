@@ -14,14 +14,21 @@ export class UserManager {
         this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
     }
 
-    getUser(userName: string): User {
+    getUserData(userName: string): UserData {
         if (!this.checkUserExists(userName)) {
             let newUser = new User(new UserData(userName));
-            this.dbManager.pushValue('users', newUser);
-            return newUser;
+            let tempUser = {};
+            tempUser[userName] = newUser;
+            this.dbManager.pushValue('users', tempUser);
+            return newUser.data;
         };
 
-        return this.dbManager.findValue<User>('users', (user) => user[userName] !== undefined);
+        let users = this.dbManager.getValue('users') as any[];
+        let userIndex = users.findIndex(user => user[userName] !== undefined);
+        let searchQuery = ['users', userIndex, userName];
+
+        let user = this.dbManager.querySearch<User>(searchQuery);
+        return user.data;
     }
 
     getCurrentViewers(channel: string): Promise<{}> {
@@ -41,7 +48,10 @@ export class UserManager {
 
     /** Updates the user data entry in the db with the passed user data */
     updateUserData(userName: string, userData: UserData) {
-        this.dbManager.assignValue('users', (userItem) => userItem[userName] !== undefined, { userName: { data: userData } });
+        let users = this.dbManager.getValue('users') as any[];
+        let userIndex = users.findIndex(userWrappr => userWrappr[userName] !== undefined);
+        let searchQuery = ['users', userIndex, userName];
+        this.dbManager.assignValue('users', searchQuery, { data: userData });
     }
 
     getAllUsers(): any {
@@ -49,6 +59,6 @@ export class UserManager {
     }
 
     private checkUserExists(userName: string): boolean {
-        return this.dbManager.findValue('users', (user) => { user[userName] !== undefined }) !== undefined;
+        return this.dbManager.findValue('users', (user) => user[userName] !== undefined) !== undefined;
     }
 }

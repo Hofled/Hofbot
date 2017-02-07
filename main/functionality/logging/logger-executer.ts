@@ -20,9 +20,9 @@ export class LoggerExecuter implements IExecuter {
             case 'commands': {
                 let allCommands = this.commandManager.getLatestCommands();
                 let message = 'The available commands are: ';
-                for (let command in allCommands) {
-                    command = '!' + command + ' ';
-                    message += command;
+                for (let commandWrapper of allCommands) {
+                    let formatedCommand = '!' + Object.keys(commandWrapper)[0] + ' ';
+                    message += formatedCommand;
                 }
 
                 this.messageSender.sendMessage(msgData.channelName, message);

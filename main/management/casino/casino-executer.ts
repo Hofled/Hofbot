@@ -32,9 +32,9 @@ export class CasinoExecuter implements IExecuter {
             case 'gamble': {
                 // Currently only supports gambling of hofcoins
                 let currencyType = "hofcoins";
-                let gambler = this.userManager.getUser(msgData.userState.username);
+                let gamblerData = this.userManager.getUserData(msgData.userState.username);
 
-                if (!this.cooldownManager.canGamble(msgData.messageTime, gambler.data.gambling["last-gamble-time"])) {
+                if (!this.cooldownManager.canGamble(msgData.messageTime, gamblerData.gambling["last-gamble-time"])) {
                     let msg = this.messageBuilder.formatMessage("%n you can only gamble every %n seconds.", [msgData.userState.username, this.cooldownManager.getGambleCooldown()]);
                     this.messageSender.sendMessage(msgData.channelName, msg);
                     this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
@@ -49,7 +49,7 @@ export class CasinoExecuter implements IExecuter {
                 }
 
                 if (this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, currencyType) < gambleAmount) {
-                    let message = gambler.data["display-name"] + " - You do not have a sufficient currency count to gamble.";
+                    let message = gamblerData["display-name"] + " - You do not have a sufficient currency count to gamble that much.";
                     this.messageSender.sendMessage(msgData.channelName, message);
                     break;
                 }

@@ -43,7 +43,7 @@ export class SettingsManager {
             return false;
         }
 
-        this.dbManager.setValue('cooldown', cooldown * 1000);
+        this.dbManager.setValue(cooldownType, cooldown * 1000);
         this.notifySettingsChanged();
         return true;
     }
