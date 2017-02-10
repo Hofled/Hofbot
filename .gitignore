@@ -2,4 +2,7 @@ node_modules
 main/**/*.js
 main/**/*.js.map
 
+!main/management/users/storage/.gitkeep
+main/management/users/storage/*
+
 *.log

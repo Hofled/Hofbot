@@ -1,9 +1,7 @@
 export class CurrencyData {
     amount: number;
-    channel: string;
 
-    constructor(amount: number, channelName: string) {
+    constructor(amount: number) {
         this.amount = amount;
-        this.channel = channelName;
     }
 }

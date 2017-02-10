@@ -8,6 +8,7 @@ import { CasinoManager } from '../casino/casino-manager';
 import { CooldownManager } from '../cooldown/cooldown-manager';
 import { PermissionValidator } from '../../functionality/permissions/index';
 import { UserManager } from '../users/user-manager';
+import { GiveawayManager } from '../../functionality/giveaway/index';
 
 export class CommandHandler {
     private inputParser: InputParser;
@@ -18,14 +19,14 @@ export class CommandHandler {
     private commandTasker: CommandTasker;
     private messageSender: MessageSender;
 
-    constructor(messageSender: MessageSender, messageBuilder: MessageBuilder, settingsManager: SettingsManager, casinoManager: CasinoManager, cooldownManager: CooldownManager, permissionValidator: PermissionValidator, userManager: UserManager) {
+    constructor(messageSender: MessageSender, messageBuilder: MessageBuilder, settingsManager: SettingsManager, casinoManager: CasinoManager, cooldownManager: CooldownManager, permissionValidator: PermissionValidator, userManager: UserManager, giveawayManager: GiveawayManager) {
         this.permissionsValidator = permissionValidator;
         this.messageSender = messageSender;
         this.inputParser = new InputParser();
         this.inputValidator = new InputValidator();
         this.commandManager = new CommandManager(this.inputValidator);
         this.cooldownManager = cooldownManager;
-        this.commandTasker = new CommandTasker(this.cooldownManager, this.commandManager, this.messageSender, messageBuilder, casinoManager, settingsManager, userManager);
+        this.commandTasker = new CommandTasker(this.cooldownManager, this.commandManager, this.messageSender, messageBuilder, casinoManager, settingsManager, userManager, giveawayManager);
     }
 
     handleMessage(data: MessageData) {
@@ -33,23 +34,21 @@ export class CommandHandler {
         if (!this.inputValidator.isValidCommand(data.message)) return;
 
         let commandName = this.inputParser.getCommandName(data.message);
-        let commandsObj = this.commandManager.getLatestCommands();
-        let command = this.commandManager.getCommandData(commandName);
+        let commandData = this.commandManager.getCommandData(commandName);
 
-        if (command == false) return;
-        command = command as CommandData;
+        if (commandData == false) return;
+        commandData = commandData as CommandData;
 
-        if (!this.permissionsValidator.checkPermission(data.userState.username, command.permission)) {
+        if (!this.permissionsValidator.checkPermission(data.userState.username, commandData.permission)) {
             this.messageSender.sendMessage(data.channelName, "Insufficient permissions.");
-            this.cooldownManager.resetLastCommandTime(data.messageTime, data.channelName);
             return;
         }
 
         // Filter messages based on the cooldown.
-        if (command.cooldown && !(this.cooldownManager.canProcessCommand(data.messageTime, data.channelName))) return;
+        if (commandData.cooldown && !(this.cooldownManager.canProcessCommand(data.messageTime, data.channelName))) return;
 
         let params = this.inputParser.getCommandParams(data.message);
 
-        this.commandTasker.taskCommand(command, data, params);
+        this.commandTasker.taskCommand(commandData, data, params);
     }
 }

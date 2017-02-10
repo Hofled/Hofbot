@@ -1,16 +1,9 @@
-import * as fs from 'fs';
+import * as lowdb from 'lowdb';
 
 export class DataBaseGenerator {
     private readonly usersStoragePath: string = "main/management/users/storage/users_";
 
     generateUsersDB(channelName: string) {
-        let options = { flag: 'wx' };
-
-        try {
-            fs.writeFileSync(this.usersStoragePath + channelName + ".json", {}, options);
-        }
-        catch (err) {
-            console.log('error in generating ' + this.usersStoragePath + channelName + ".json");
-        }
+        new lowdb(this.usersStoragePath + channelName + ".json").defaults({ users: [] }).value();
     }
 }

@@ -4,18 +4,19 @@ export class DataBaseManager {
     constructor(dbPath: string, private db = new lowdb(dbPath)) {
     }
 
-    /** Used to find a specific value within an array entry
+    /** Used to find a specific value within an entire array by being able to iterate and use a predicate
      */
     findValue<T>(arrayPath: string, predicate: any): T {
         return this.db.get(arrayPath).find(predicate).value<T>();
     }
 
     /** Assings a value to the specified array key using the specified predicate and value
-     * @param {any} predicate the predicate to use for finding the required entries
+     * @param {any} predicate the predicate to use for finding the required entries, based on lodash syntax: 
+     * can be an array which sepcifies the location / key of every field
      * @param {any} value the key and value to set in the specified entry, can use the format: {objectKey: newValue}
      */
     assignValue(arrayPath: string, predicate: any, value: any) {
-        this.db.get(arrayPath).find(predicate).assign(value);
+        this.db.get(arrayPath).find(predicate).assign(value).value();
     }
 
     /** Removes all objects that satisfy the predicate value from the specified fieldPath,
@@ -36,20 +37,15 @@ export class DataBaseManager {
     }
 
     /** Checks if the specified field exists in the db. 
-     * @param {?string} arrayQueuery search a parent array type entry  which contains the fieldPath
      * @param {string} fieldPath the field to check using the dot notation such as: key.subkey
     */
-    checkHas(fieldPath: string, arrayQueuery?: { parentKey: string, predicate: any }): boolean {
-        if (arrayQueuery) {
-            return this.db.get(arrayQueuery.parentKey).find(arrayQueuery.predicate).hasIn(fieldPath).value<boolean>();
-        }
-
+    checkHas(fieldPath: string): boolean {
         return this.db.hasIn(fieldPath).value<boolean>();
     }
-    
+
     /** Returns the entire DB in its current state */
     getEntireDB(): any {
-        this.db.getState();
+        return this.db.getState();
     }
 
     /** Sets a specific value from the db.
@@ -65,5 +61,12 @@ export class DataBaseManager {
      */
     getValue<T>(fieldPath: string): T {
         return this.db.get(fieldPath).value<T>();
+    }
+
+    /** Searches the database using the specified array of parameters for usage in the query.
+     * @param {any} query a paramaters array that describes way to access the value.
+     */
+    querySearch<T>(query: any[]): T {
+        return this.db.get(query).value<T>();
     }
 }

@@ -1,14 +1,22 @@
 {
-    "cooldown": 3000,
-    "gamble-cooldown": 15000,
-    "currencies": {
-        "hofcoins": {
-            "interval": 60000,
-            "amount-per-interval": 10,
-            "channels": [
-                "hofled"
-            ],
-            "name": "hofcoins"
-        }
+  "cooldown": 1000,
+  "gamble-cooldown": 1000,
+  "currencies": {
+    "hofcoins": {
+      "interval": 60000,
+      "amount-per-interval": 1,
+      "channels": [
+        "hofled"
+      ],
+      "name": "hofcoins"
+    },
+    "caps": {
+      "interval": 60000,
+      "amount-per-interval": 1,
+      "channels": [
+        "blasting_cap"
+      ],
+      "name": "caps"
     }
+  }
 }

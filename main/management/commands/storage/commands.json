@@ -1,92 +1,120 @@
 {
-    "commands": [
-        {
-            "name": "hofcoins",
-            "data": {
-                "name": "hofcoins",
-                "permission": 1,
-                "internal": true,
-                "native": true,
-                "casino": true,
-                "cooldown": true
-            }
-        },
-        {
-            "name": "setcooldown",
-            "data": {
-                "name": "setcooldown",
-                "permission": 5,
-                "internal": true,
-                "native": true,
-                "bot-settings": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "gamblecooldown",
-            "data": {
-                "name": "gamblecooldown",
-                "permission": 5,
-                "internal": true,
-                "native": true,
-                "bot-settings": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "add",
-            "data": {
-                "name": "add",
-                "permission": 5,
-                "internal": true,
-                "native": true,
-                "command-crud": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "remove",
-            "data": {
-                "name": "remove",
-                "permission": 5,
-                "internal": true,
-                "native": true,
-                "command-crud": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "update",
-            "data": {
-                "name": "update",
-                "permission": 5,
-                "internal": true,
-                "native": true,
-                "command-crud": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "commands",
-            "data": {
-                "name": "commands",
-                "permission": 1,
-                "internal": true,
-                "native": true,
-                "log": true,
-                "cooldown": false
-            }
-        },
-        {
-            "name": "gamble",
-            "data": {
-                "name": "gamble",
-                "permission": 1,
-                "internal": true,
-                "native": true,
-                "casino": true,
-                "cooldown": true
-            }
-        }
-    ]
+  "commands": [
+    {
+      "setcooldown": {
+        "name": "setcooldown",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "bot-settings": true,
+        "cooldown": false
+      }
+    },
+    {
+      "gamblecooldown": {
+        "name": "gamblecooldown",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "bot-settings": true,
+        "cooldown": false
+      }
+    },
+    {
+      "add": {
+        "name": "add",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+      }
+    },
+    {
+      "remove": {
+        "name": "remove",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+      }
+    },
+    {
+      "update": {
+        "name": "update",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "command-crud": true,
+        "cooldown": false
+      }
+    },
+    {
+      "commands": {
+        "name": "commands",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "log": true,
+        "cooldown": false
+      }
+    },
+    {
+      "gamble": {
+        "name": "gamble",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "casino": true,
+        "cooldown": true
+      }
+    },
+    {
+      "giveaway": {
+        "name": "giveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "entergiveaway": {
+        "name": "entergiveaway",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "cancelgiveaway": {
+        "name": "cancelgiveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "endgiveaway": {
+        "name": "endgiveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "hofcoins": {
+        "name": "hofcoins",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "casino": true,
+        "cooldown": true
+      }
+    }
+  ]
 }
