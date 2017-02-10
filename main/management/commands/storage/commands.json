@@ -71,6 +71,42 @@
       }
     },
     {
+      "giveaway": {
+        "name": "giveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "entergiveaway": {
+        "name": "entergiveaway",
+        "permission": 1,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "cancelgiveaway": {
+        "name": "cancelgiveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
+      "endgiveaway": {
+        "name": "endgiveaway",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "giveaway": true
+      }
+    },
+    {
       "hofcoins": {
         "name": "hofcoins",
         "permission": 1,

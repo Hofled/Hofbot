@@ -16,10 +16,12 @@ export class CommandData {
     "command-crud": boolean;
     /**A flag that indicates if a command is a logging related command*/
     log: boolean;
+    /**A flag that indicates if a command is a giveaway command */
+    giveaway: boolean;
     /**A flag that defines if a command is affected by cooldown*/
     cooldown: boolean;
 
-    constructor(permission: number = 1, name: string, content?: string, internal: boolean = false, native: boolean = false, botSettings: boolean = false, casino: boolean = false, commandCrud: boolean = false, isLog: boolean = false, cooldown: boolean = true) {
+    constructor(permission: number = 1, name: string, content?: string, internal: boolean = false, native: boolean = false, botSettings: boolean = false, casino: boolean = false, commandCrud: boolean = false, isLog: boolean = false, cooldown: boolean = true, giveaway: boolean = false) {
         this.name = name;
         this.permission = permission;
         this.content = content;
@@ -29,6 +31,7 @@ export class CommandData {
         this.casino = casino;
         this["command-crud"] = commandCrud;
         this.log = isLog;
+        this.giveaway = giveaway;
         this.cooldown = cooldown;
     }
 }

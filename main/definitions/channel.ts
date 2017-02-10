@@ -8,6 +8,7 @@ import { CasinoManager } from '../management/casino/index';
 import { SettingsManager } from '../bot-settings/index';
 import { UserManager } from '../management/users/user-manager';
 import { CooldownManager } from '../management/cooldown/cooldown-manager';
+import { GiveawayManager } from '../functionality/giveaway/index';
 
 /** A logical representation of a single channel connection */
 export class Channel {
@@ -25,7 +26,8 @@ export class Channel {
         this.userManager = new UserManager(name);
         let permissionValidator = new PermissionValidator(this.userManager);
         this.casinoManager = new CasinoManager(this.userManager, settingsManager);
-        this.commandHandler = new CommandHandler(this.messageSender, this.messageBuilder, settingsManager, this.casinoManager, cooldownManager, permissionValidator, this.userManager);
+        let giveawayManager = new GiveawayManager(this.userManager, this.casinoManager);
+        this.commandHandler = new CommandHandler(this.messageSender, this.messageBuilder, settingsManager, this.casinoManager, cooldownManager, permissionValidator, this.userManager, giveawayManager);
     }
 
     startCurrencyInterval() {

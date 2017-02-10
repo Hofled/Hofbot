@@ -47,7 +47,7 @@ export class CasinoManager {
         this.userManager.updateUserData
     }
 
-    getGambleMessage(gambleAmout: number, result: GambleData, gamblerData: UserData, currencyType: string): string {
+    private getGambleMessage(gambleAmout: number, result: GambleData, gamblerData: UserData, currencyType: string): string {
         let message = gamblerData["display-name"] + " gambled " + gambleAmout + " " + currencyType + " and got a result of " + result.gambleResult + ".";
         if (result.win) {
             message += "\n You won " + result.gambleOutcome + " " + currencyType + " and now have " + gamblerData.currencies[currencyType].amount;
@@ -61,7 +61,7 @@ export class CasinoManager {
     getUserCurrency(userName: string, channelName: string, currencyType: string): number {
         let userData = this.userManager.getUserData(userName);
         if (!(currencyType in userData.currencies)) {
-            userData.currencies[currencyType] = new CurrencyData(0, channelName);
+            userData.currencies[currencyType] = new CurrencyData(0);
             this.userManager.updateUserData(userName, userData);
         }
 
@@ -72,7 +72,7 @@ export class CasinoManager {
     changeUserCurrency(userName: string, channelName: string, amount: number, currencyType: string) {
         let userData = this.userManager.getUserData(userName);
         if (!(currencyType in userData.currencies)) {
-            userData.currencies[currencyType] = new CurrencyData(0, channelName);
+            userData.currencies[currencyType] = new CurrencyData(0);
         }
         userData.currencies[currencyType].amount += amount;
         this.userManager.updateUserData(userName, userData);
@@ -80,9 +80,7 @@ export class CasinoManager {
 
     /**Starts the currency interval in the specified channels*/
     startCurrencyInterval(channelName: string) {
-        let settings = this.settingsManager.getBotSettings();
-
-        let channelCurrency = this.settingsManager.getChannelCurrency(channelName, settings);
+        let channelCurrency = this.settingsManager.getChannelCurrency(channelName);
 
         let id = setInterval(() => {
             this.giveAllCurrency(channelName, channelCurrency["amount-per-interval"], channelCurrency.name, false);

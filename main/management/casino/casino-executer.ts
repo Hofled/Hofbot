@@ -1,5 +1,6 @@
 import { IExecuter } from '../../definitions/interfaces/IExecuter';
 import { CasinoManager } from '../casino/casino-manager';
+import { SettingsManager } from '../../bot-settings/index';
 import { CommandData, MessageData } from '../../definitions/index';
 import { MessageBuilder, MessageSender } from '../../functionality/messages/index';
 import { UserManager } from '../users/user-manager';
@@ -10,28 +11,30 @@ export class CasinoExecuter implements IExecuter {
     private messageSender: MessageSender;
     private messageBuilder: MessageBuilder;
     private userManager: UserManager;
+    private settingsManager: SettingsManager;
     cooldownManager: CooldownManager;
 
-    constructor(casinoManager: CasinoManager, messageSender: MessageSender, messageBuilder: MessageBuilder, cooldownManager: CooldownManager, userManager: UserManager) {
+    constructor(casinoManager: CasinoManager, messageSender: MessageSender, messageBuilder: MessageBuilder, cooldownManager: CooldownManager, userManager: UserManager, settingsManager: SettingsManager) {
         this.casinoManager = casinoManager;
         this.messageSender = messageSender;
         this.messageBuilder = messageBuilder;
         this.cooldownManager = cooldownManager;
         this.userManager = userManager;
+        this.settingsManager = settingsManager;
     }
 
     execute(command: CommandData, msgData: MessageData, params?: any[]) {
         switch (command.name) {
             case 'hofcoins': {
-                let coins = this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, "hofcoins");
-                let msg = this.messageBuilder.formatMessage("%n has %n hofcoins.", [msgData.userState.username, coins]);
+                let channelCurrency = this.settingsManager.getChannelCurrency(msgData.channelName);
+                let currencyCount = this.casinoManager.getUserCurrency(msgData.userState.username, msgData.channelName, channelCurrency.name);
+                let msg = this.messageBuilder.formatMessage("%n has %n %n.", [msgData.userState.username, currencyCount, channelCurrency.name]);
                 this.messageSender.sendMessage(msgData.channelName, msg);
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;
             }
             case 'gamble': {
-                // Currently only supports gambling of hofcoins
-                let currencyType = "hofcoins";
+                let currencyType = this.settingsManager.getChannelCurrency(msgData.channelName).name;
                 let gamblerData = this.userManager.getUserData(msgData.userState.username);
 
                 if (!this.cooldownManager.canGamble(msgData.messageTime, gamblerData.gambling["last-gamble-time"])) {

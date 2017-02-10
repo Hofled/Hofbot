@@ -10,17 +10,18 @@ export class SettingsManager {
     readonly settingsFile: string = "main/bot-settings/bot-settings.json";
     settingsEmitter: EventEmitter;
     private dbManager: DataBaseManager;
+    private settingsObj: BotSettings;
 
     constructor() {
         this.dbManager = new DataBaseManager(this.settingsFile);
         this.settingsEmitter = new EventEmitter();
+        this.settingsObj = this.getBotSettings();
     }
 
-    getChannelCurrency(channel: string, settings: BotSettings): CurrencySettingsData {
-        let currencySetting;
-        for (let currency in settings.currencies) {
-            if (settings.currencies[currency].channels.indexOf(channel) !== -1) {
-                return currencySetting = settings.currencies[currency];
+    getChannelCurrency(channel: string): CurrencySettingsData {
+        for (let currency in this.settingsObj.currencies) {
+            if (this.settingsObj.currencies[currency].channels.indexOf(channel) !== -1) {
+                return this.settingsObj.currencies[currency];
             }
         }
     }
@@ -30,7 +31,9 @@ export class SettingsManager {
     }
 
     notifySettingsChanged() {
-        this.settingsEmitter.emit('settings-changed', this.dbManager.getEntireDB());
+        let newSettings = this.dbManager.getEntireDB();
+        this.settingsObj = newSettings;
+        this.settingsEmitter.emit('settings-changed', newSettings);
     }
 
     /** Updates the cooldown field in the settings
