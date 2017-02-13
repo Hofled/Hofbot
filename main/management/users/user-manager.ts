@@ -58,7 +58,7 @@ export class UserManager {
         return this.dbManager.getEntireDB();
     }
 
-    private checkUserExists(userName: string): boolean {
+    checkUserExists(userName: string): boolean {
         return this.dbManager.findValue('users', (user) => user[userName] !== undefined) !== undefined;
     }
 }

@@ -62,6 +62,29 @@ export class CasinoExecuter implements IExecuter {
                 this.cooldownManager.resetLastCommandTime(msgData.messageTime, msgData.channelName);
                 break;
             }
+            case 'give': {
+                let currencyType = this.settingsManager.getChannelCurrency(msgData.channelName).name;
+                let msg;
+
+                let userName = params[0];
+                if (!this.userManager.checkUserExists(userName)) {
+                    msg = "The specified user is not registered in the system.";
+                    this.messageSender.sendMessage(msgData.channelName, msg);
+                    break;
+                }
+
+                let amount = parseInt(params[1]);
+                if (isNaN(amount) || amount <= 0) {
+                    msg = "The specified amount is invalid.";
+                    this.messageSender.sendMessage(msgData.channelName, msg);
+                    break;
+                }
+
+                this.casinoManager.changeUserCurrency(userName, msgData.channelName, amount, currencyType);
+                msg = userName + " has been given " + amount + " " + currencyType;
+                this.messageSender.sendMessage(msgData.channelName, msg);
+                break;
+            }
         }
     }
 }

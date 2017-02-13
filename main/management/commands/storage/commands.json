@@ -115,6 +115,16 @@
         "casino": true,
         "cooldown": true
       }
+    },
+    {
+      "give": {
+        "name": "give",
+        "permission": 5,
+        "internal": true,
+        "native": true,
+        "casino": true,
+        "cooldown": false
+      }
     }
   ]
 }
