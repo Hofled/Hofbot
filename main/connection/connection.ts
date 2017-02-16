@@ -83,17 +83,23 @@ export class BotConnection {
     }
 
     connect() {
-        this.client.connect().
-            then((data) => {
+        this.client.connect()
+            .then((data) => {
                 this.messageSender.broadcastMessage(this.welcomeMessage);
                 this.channels.forEach((channel) => channel.startCurrencyInterval());
-            }).
-            catch((err) => {
-
+            })
+            .catch((err) => {
+                console.log(err);
             });
     }
 
     disconnect() {
-        this.client.disconnect();
+        this.client.disconnect()
+            .then(data => {
+
+            })
+            .catch(err => {
+                console.log(err);
+            });
     }
 } 
