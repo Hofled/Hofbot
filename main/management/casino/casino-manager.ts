@@ -51,9 +51,8 @@ export class CasinoManager {
         // Remove the amount the user is gambling and put it
         this.changeUserCurrency(userName, channelName, -amount, currencyType);
         let gambleResult = this.slotMachineManager.gamble(amount);
-        this.changeUserCurrency(userName, channelName, gambleResult.gambleOutcome, currencyType);
-
-        let gamblerData = this.userManager.getUserData(userName);
+        let gamblerData = this.changeUserCurrency(userName, channelName, gambleResult.gambleOutcome, currencyType);
+        
         gamblerData.gambling["last-gamble-time"] = moment();
 
         this.userManager.updateUserData(userName, gamblerData);
@@ -81,9 +80,10 @@ export class CasinoManager {
         if (!(currencyType in userData.currencies)) {
             userData.currencies[currencyType] = new CurrencyData(0);
             this.userManager.updateUserData(userName, userData);
+            return userData.currencies[currencyType].amount;
         }
 
-        return this.userManager.getUserData(userName).currencies[currencyType].amount;
+        return userData.currencies[currencyType].amount;
     }
 
     /** Acts the same as changeUserCurrency, but doesnt updates/access the DB */
@@ -97,14 +97,18 @@ export class CasinoManager {
         return userData;
     }
 
-    /**Gives a user a certain amount of currency (negative amount reduces)*/
-    changeUserCurrency(userName: string, channelName: string, amount: number, currencyType: string) {
+    /** Gives a user a certain amount of currency (negative amount reduces) 
+     * @returns {UserData} returns the updated UserData object
+    */
+    changeUserCurrency(userName: string, channelName: string, amount: number, currencyType: string): UserData {
         let userData = this.userManager.getUserData(userName);
         if (!(currencyType in userData.currencies)) {
             userData.currencies[currencyType] = new CurrencyData(0);
         }
         userData.currencies[currencyType].amount += amount;
         this.userManager.updateUserData(userName, userData);
+
+        return userData;
     }
 
     /**Starts the currency interval in the specified channels*/
