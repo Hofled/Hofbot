@@ -8,9 +8,12 @@ import { DataBaseManager } from '../../functionality/db/index';
 
 export class UserManager {
     private dbManager: DataBaseManager;
-    private readonly usersFile: string = 'main/management/users/storage/users_';
+    private readonly usersKey: string;
+    private readonly usersFile: string;
 
     constructor(channelName: string) {
+        this.usersKey = 'users';
+        this.usersFile = 'main/management/users/storage/users_';
         this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
     }
 
@@ -62,7 +65,7 @@ export class UserManager {
     }
 
     updateAllUsers(users: any) {
-        this.dbManager.setEntireDB(users);
+        this.dbManager.setValue(this.usersKey, users);
     }
 
     checkUserExists(userName: string): boolean {

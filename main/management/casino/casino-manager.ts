@@ -25,19 +25,20 @@ export class CasinoManager {
         promise
             .then((viewersObj) => {
                 let usersDB = this.userManager.getAllUsers();
-                
+                let usersArray = usersDB.users;
+
                 for (let viewerType in viewersObj) {
                     for (let viewer of viewersObj[viewerType]) {
 
-                        let index = _.findIndex(usersDB.users, wrapper => wrapper[viewer] != undefined);
-                        index = index == -1 ? usersDB.users.length : index;
+                        let index = _.findIndex(usersArray, wrapper => wrapper[viewer] != undefined);
+                        index = index == -1 ? usersArray.length : index;
                         let userData = _.get(usersDB.users, [index, viewer, 'data'], new UserData(viewer));
                         userData = this.changeUserCurrencyLocal(userData, amount, currencyType);
-                        _.set(usersDB.users, [index, viewer, 'data'], userData);
+                        _.set(usersArray, [index, viewer, 'data'], userData);
                     }
                 }
 
-                this.userManager.updateAllUsers(usersDB);
+                this.userManager.updateAllUsers(usersArray);
             })
             .catch(reason => {
                 console.log("Failed at currency interval:\n");
