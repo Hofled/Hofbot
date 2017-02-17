@@ -39,14 +39,23 @@ export class UserManager {
             http.get('http://tmi.twitch.tv/group/user/' + channel + '/chatters', (res) => {
                 res.setEncoding('utf8');
                 let currentUsers = '';
+
                 res.on('data', (data) => {
                     currentUsers += data;
                 });
+
                 res.on('end', () => {
-                    resolve(JSON.parse(currentUsers)['chatters']);
-                }).on('error', err => {
-                    reject(err);
+                    try {
+                        let chatters = JSON.parse(currentUsers)['chatters'];
+                        resolve(chatters);
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
                 });
+
+            }).on('error', err => {
+                console.log(err);
             });
         });
     }
