@@ -1,6 +1,6 @@
 {
   "cooldown": 1000,
-  "gamble-cooldown": 1000,
+  "gamble-cooldown": 15000,
   "currencies": {
     "hofcoins": {
       "interval": 60000,

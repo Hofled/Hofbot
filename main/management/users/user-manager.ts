@@ -41,6 +41,8 @@ export class UserManager {
                 });
                 res.on('end', () => {
                     resolve(JSON.parse(currentUsers)['chatters']);
+                }).on('error', err => {
+                    reject(err);
                 });
             });
         });
@@ -54,8 +56,13 @@ export class UserManager {
         this.dbManager.assignValue('users', searchQuery, { data: userData });
     }
 
+    /** Returns the entire DB of the users */
     getAllUsers(): any {
         return this.dbManager.getEntireDB();
+    }
+
+    updateAllUsers(users: any) {
+        this.dbManager.setEntireDB(users);
     }
 
     checkUserExists(userName: string): boolean {

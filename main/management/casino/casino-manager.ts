@@ -1,9 +1,11 @@
-import { UserManager } from '../users/user-manager';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
+import * as _ from 'lodash';
+
+import { UserManager } from '../users/user-manager';
 import { SettingsManager } from '../../bot-settings/index';
 import { CurrencyData, CurrencySettingsData, GambleData, UserData } from '../../definitions/index';
 import { SlotMachineManager } from '../casino/slot-machine/index';
-import * as moment from 'moment';
 
 export class CasinoManager {
     private userManager: UserManager;
@@ -20,13 +22,28 @@ export class CasinoManager {
     /**Gives every user currently in the chat currency*/
     giveAllCurrency(channelName: string, amount: number, currencyType: string, displayMessage: boolean) {
         let promise = this.userManager.getCurrentViewers(channelName);
-        promise.then((viewersObj) => {
-            for (let viewerType in viewersObj) {
-                for (let viewer of viewersObj[viewerType]) {
-                    this.changeUserCurrency(viewer, channelName, amount, currencyType);
+        promise
+            .then((viewersObj) => {
+                let usersDB = this.userManager.getAllUsers();
+                
+                for (let viewerType in viewersObj) {
+                    for (let viewer of viewersObj[viewerType]) {
+
+                        let index = _.findIndex(usersDB.users, wrapper => wrapper[viewer] != undefined);
+                        index = index == -1 ? usersDB.users.length : index;
+                        let userData = _.get(usersDB.users, [index, viewer, 'data'], new UserData(viewer));
+                        userData = this.changeUserCurrencyLocal(userData, amount, currencyType);
+                        _.set(usersDB.users, [index, viewer, 'data'], userData);
+                    }
                 }
-            }
-        })
+
+                this.userManager.updateAllUsers(usersDB);
+            })
+            .catch(reason => {
+                console.log("Failed at currency interval:\n");
+                console.log(reason);
+                console.log("\n");
+            });
     }
 
     gambleCurrency(channelName: string, userName: string, amount: number, currencyType: string): string {
@@ -68,6 +85,17 @@ export class CasinoManager {
         return this.userManager.getUserData(userName).currencies[currencyType].amount;
     }
 
+    /** Acts the same as changeUserCurrency, but doesnt updates/access the DB */
+    private changeUserCurrencyLocal(userData: UserData, amount: number, currencyType: string): UserData {
+        if (!(currencyType in userData.currencies)) {
+            userData.currencies[currencyType] = new CurrencyData(0);
+        }
+
+        userData.currencies[currencyType].amount += amount;
+
+        return userData;
+    }
+
     /**Gives a user a certain amount of currency (negative amount reduces)*/
     changeUserCurrency(userName: string, channelName: string, amount: number, currencyType: string) {
         let userData = this.userManager.getUserData(userName);
@@ -83,7 +111,8 @@ export class CasinoManager {
         let channelCurrency = this.settingsManager.getChannelCurrency(channelName);
 
         let id = setInterval(() => {
-            this.giveAllCurrency(channelName, channelCurrency["amount-per-interval"], channelCurrency.name, false);
+            this.giveAllCurrency(channelName, channelCurrency["amount-per-interval"], channelCurrency.name,
+                false);
         }, channelCurrency.interval)
 
         this.currencyIntervals.push(id);

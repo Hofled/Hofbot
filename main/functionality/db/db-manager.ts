@@ -48,6 +48,11 @@ export class DataBaseManager {
         return this.db.getState();
     }
 
+    /** Sets the value of the ENTIRE DB - USE WITH CAUTION! */
+    setEntireDB(value: any) {
+        this.db.setState(value);
+    }
+
     /** Sets a specific value from the db.
      * @param {string} fieldPath Search parameter specified in the format of a JSON object such as: key.subkey
      * @param {any} value value to set the specified field with
