@@ -76,7 +76,8 @@
         "permission": 5,
         "internal": true,
         "native": true,
-        "giveaway": true
+        "giveaway": true,
+        "cooldown": false
       }
     },
     {
@@ -85,7 +86,8 @@
         "permission": 1,
         "internal": true,
         "native": true,
-        "giveaway": true
+        "giveaway": true,
+        "cooldown": false
       }
     },
     {
@@ -94,7 +96,8 @@
         "permission": 5,
         "internal": true,
         "native": true,
-        "giveaway": true
+        "giveaway": true,
+        "cooldown": false
       }
     },
     {
@@ -103,7 +106,8 @@
         "permission": 5,
         "internal": true,
         "native": true,
-        "giveaway": true
+        "giveaway": true,
+        "cooldown": false
       }
     },
     {
