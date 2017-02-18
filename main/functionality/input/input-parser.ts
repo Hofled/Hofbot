@@ -21,6 +21,6 @@ export class InputParser {
 
     /**Removes the command prefix from the input*/
     private unwrapCommandPrefix(rawInput: string): string {
-        return rawInput.slice(1, rawInput.length);
+        return rawInput.substr(1);
     }
 }

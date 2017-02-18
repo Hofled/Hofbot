@@ -8,9 +8,12 @@ import { DataBaseManager } from '../../functionality/db/index';
 
 export class UserManager {
     private dbManager: DataBaseManager;
-    private readonly usersFile: string = 'main/management/users/storage/users_';
+    private readonly usersKey: string;
+    private readonly usersFile: string;
 
     constructor(channelName: string) {
+        this.usersKey = 'users';
+        this.usersFile = 'main/management/users/storage/users_';
         this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
     }
 
@@ -36,12 +39,23 @@ export class UserManager {
             http.get('http://tmi.twitch.tv/group/user/' + channel + '/chatters', (res) => {
                 res.setEncoding('utf8');
                 let currentUsers = '';
+
                 res.on('data', (data) => {
                     currentUsers += data;
                 });
+
                 res.on('end', () => {
-                    resolve(JSON.parse(currentUsers)['chatters']);
+                    try {
+                        let chatters = JSON.parse(currentUsers)['chatters'];
+                        resolve(chatters);
+                    }
+                    catch (err) {
+                        console.log(err);
+                    }
                 });
+
+            }).on('error', err => {
+                console.log(err);
             });
         });
     }
@@ -54,11 +68,16 @@ export class UserManager {
         this.dbManager.assignValue('users', searchQuery, { data: userData });
     }
 
+    /** Returns the entire DB of the users */
     getAllUsers(): any {
         return this.dbManager.getEntireDB();
     }
 
-    private checkUserExists(userName: string): boolean {
+    updateAllUsers(users: any) {
+        this.dbManager.setValue(this.usersKey, users);
+    }
+
+    checkUserExists(userName: string): boolean {
         return this.dbManager.findValue('users', (user) => user[userName] !== undefined) !== undefined;
     }
 }

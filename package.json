@@ -1,6 +1,6 @@
 {
   "name": "Hofbot",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A twitch bot for pseudo currency with multi-functions",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,7 @@
     "tmi.js": "^1.1.2"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.52",
     "@types/node": "^7.0.0",
     "ts-node": "^2.0.0",
     "typescript": "^2.1.5"
