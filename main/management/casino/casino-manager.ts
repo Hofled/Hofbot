@@ -34,7 +34,9 @@ export class CasinoManager {
                         index = index == -1 ? usersArray.length : index;
                         let userData = _.get(usersDB.users, [index, viewer, 'data'], new UserData(viewer));
                         userData = this.changeUserCurrencyLocal(userData, amount, currencyType);
-                        _.set(usersArray, [index, viewer, 'data'], userData);
+                        let userWrap = {};
+                        userWrap[viewer] = { 'data': userData };
+                        _.set(usersArray, [index], userWrap);
                     }
                 }
 
@@ -52,7 +54,7 @@ export class CasinoManager {
         this.changeUserCurrency(userName, channelName, -amount, currencyType);
         let gambleResult = this.slotMachineManager.gamble(amount);
         let gamblerData = this.changeUserCurrency(userName, channelName, gambleResult.gambleOutcome, currencyType);
-        
+
         gamblerData.gambling["last-gamble-time"] = moment();
 
         this.userManager.updateUserData(userName, gamblerData);
