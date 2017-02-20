@@ -8,7 +8,7 @@ export class BackupManager {
 
     constructor() {
         this.backupFolder = "backups/";
-        this.errorsFileName = "backup-errors.txt";
+        this.errorsFileName = "backup-errors.log";
     }
 
     /**Starts the interval for backing up files of a specific extension

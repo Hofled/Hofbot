@@ -16,7 +16,7 @@ export class UserManager {
     constructor(channelName: string) {
         this.usersKey = 'users';
         this.usersFile = 'main/management/users/storage/users_';
-        this.errorsFileName = "user-manager-errors.txt";
+        this.errorsFileName = "user-manager-errors.log";
         this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
     }
 

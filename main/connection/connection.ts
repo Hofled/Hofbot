@@ -27,7 +27,7 @@ export class BotConnection {
     private welcomeMessage: string = "Hello! KAPOW I am %n MrDestructoid";
 
     constructor(options) {
-        this.errorsFileName = "connection-errors.txt";
+        this.errorsFileName = "connection-errors.log";
         this.tmiOptions = options;
         this.client = new tmi.client(this.tmiOptions);
         this.channels = [];
