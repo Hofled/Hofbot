@@ -11,6 +11,7 @@ import { UserManager } from '../management/users/user-manager';
 import { CooldownManager } from '../management/cooldown/cooldown-manager';
 import { PermissionValidator } from '../functionality/permissions/index';
 import { BackupManager } from '../functionality/backup/index';
+import { ErrorLogger } from '../functionality/logging/index';
 
 export class BotConnection {
     private client: tmi.client;
@@ -21,10 +22,12 @@ export class BotConnection {
     private casinoManager: CasinoManager;
     private backupManager: BackupManager;
     private dbGenerator: DataBaseGenerator;
+    private readonly errorsFileName: string;
 
     private welcomeMessage: string = "Hello! KAPOW I am %n MrDestructoid";
 
     constructor(options) {
+        this.errorsFileName = "connection-errors.txt";
         this.tmiOptions = options;
         this.client = new tmi.client(this.tmiOptions);
         this.channels = [];
@@ -89,7 +92,7 @@ export class BotConnection {
                 this.channels.forEach((channel) => channel.startCurrencyInterval());
             })
             .catch((err) => {
-                console.log(err);
+                ErrorLogger.error(err, this.errorsFileName);
             });
     }
 
@@ -99,7 +102,7 @@ export class BotConnection {
 
             })
             .catch(err => {
-                console.log(err);
+                ErrorLogger.error(err, this.errorsFileName);
             });
     }
 } 

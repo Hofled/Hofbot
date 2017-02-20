@@ -1,7 +1,15 @@
 import * as fs from 'fs';
 
+import { ErrorLogger } from '../logging/index';
+
 export class BackupManager {
-    private readonly backupFolder: string = "backups/";
+    private readonly backupFolder: string;
+    private readonly errorsFileName: string;
+
+    constructor() {
+        this.backupFolder = "backups/";
+        this.errorsFileName = "backup-errors.txt";
+    }
 
     /**Starts the interval for backing up files of a specific extension
      * @param {number} intervalTime Interval in seconds
@@ -16,6 +24,7 @@ export class BackupManager {
     private backupFiles(fileExtension: string, folder: string) {
         fs.readdir(folder, (err, list) => {
             if (err) {
+                ErrorLogger.error(`${err.name}: ${err.message}`, this.errorsFileName);
                 return;
             }
             let regex = new RegExp("/^\." + fileExtension + "$/");
@@ -25,7 +34,7 @@ export class BackupManager {
                     fs.createReadStream(folder + "/" + file).pipe(fs.createWriteStream(this.backupFolder + "backup_" + file));
                 }
                 catch (err) {
-                    console.log(err);
+                    ErrorLogger.error(err, this.errorsFileName);
                 }
             })
         })
