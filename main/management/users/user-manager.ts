@@ -39,7 +39,7 @@ export class UserManager {
 
     getCurrentViewers(channel: string): Promise<{}> {
         return new Promise((resolve, reject) => {
-            http.get('http://tmi.twitch.tv/groasdser/' + channel + '/chatters', (res) => {
+            http.get('http://tmi.twitch.tv/group/user/' + channel + '/chatters', (res) => {
                 res.setEncoding('utf8');
                 let currentUsers = '';
 
