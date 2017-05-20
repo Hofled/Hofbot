@@ -9,3 +9,4 @@ export * from "./currency-settings-data";
 export * from "./currency-data";
 export * from "./gamble-data";
 export * from "./channel";
+export * from "./user";
