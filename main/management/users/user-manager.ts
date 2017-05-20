@@ -2,8 +2,7 @@ import * as http from 'http';
 import * as lowdb from 'lowdb';
 import { Observable } from 'rxjs';
 
-import { UserData } from '../../definitions/user-data';
-import { User } from '../users/user';
+import { UserData, User } from '../../definitions';
 import { DataBaseManager } from '../../functionality/db/index';
 
 export class UserManager {
