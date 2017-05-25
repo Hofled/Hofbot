@@ -1,64 +1,93 @@
-import * as lowdb from 'lowdb';
+import * as mongoose from "mongoose";
+import * as moment from "moment";
+import { IUserData } from "../../definitions/interfaces/IUserData";
+import { userDataSchema } from "../../definitions/mongoose-related";
+import { User, UserData } from "../../definitions";
 
+/**
+ * A database manager for a specified channel
+ */
 export class DataBaseManager {
-    constructor(dbPath: string, private db = new lowdb(dbPath)) {
+    private userModel: mongoose.Model<IUserData>;
+    private dbConnection: mongoose.Connection;
+
+    constructor(private channelName: string) {
+        this.connect(this.channelName);
+        this.initializeMongooseInternals();
     }
 
-    /** Used to find a specific value within an array entry
+    private connect(channelName: string): void {
+        (<any>mongoose).Promise = global.Promise;
+        this.dbConnection = mongoose.createConnection("mongodb://localhost/" + channelName);
+    }
+
+    private initializeMongooseInternals(): void {
+        this.userModel = this.dbConnection.model<IUserData>("User", userDataSchema);
+    } 
+
+    public removeUser(userName: string): void {
+        this.userModel.remove({ userName: userName }, (err) => {
+            if (err) {
+                console.log(err);
+            }
+        })
+    }
+
+    public updateUser(userName: string, userData: UserData): void {
+        this.userModel.findOneAndUpdate({ userName: userName },
+            {
+                currencies: userData.currencies,
+                userName: userData.userName,
+                gambling: userData.gambling.time,
+                permission: userData.permission
+            },
+            (err, user) => {
+                if (err) {
+                    console.log(err);
+                }
+            });
+    }
+
+    /**
+     * Registers a new user entry into the database
+     * @param {User} user The user to register into the database
      */
-    findValue<T>(arrayPath: string, predicate: any): T {
-        return this.db.get(arrayPath).find(predicate).value<T>();
+    public registerUser(user: User): Promise<IUserData> {
+        return new Promise<IUserData>((res, rej) => {
+            let documentUser = new this.userModel(
+                {
+                    gambling: user.data.gambling.time,
+                    currencies: user.data.currencies,
+                    permission: user.data.permission,
+                    userName: user.data.userName
+                });
+            documentUser.save((err, userData) => {
+                if (err || !userData) {
+                    console.log(`Error registering new user: ${err}`);
+                    rej(err);
+                }
+                res(userData);
+            });
+        })
     }
 
-    /** Assings a value to the specified array key using the specified predicate and value
-     * @param {any} predicate the predicate to use for finding the required entries
-     * @param {any} value the key and value to set in the specified entry, can use the format: {objectKey: newValue}
+    /** Gets a specific user from the db.
+     * @param {string} userName User name to be searched.
      */
-    assignValue(arrayPath: string, predicate: any, value: any) {
-        this.db.get(arrayPath).find(predicate).assign(value).value();
-    }
-
-    /** Removes all objects that satisfy the predicate value from the specified fieldPath,
-     * currently only supports removal from fields which are of type array.
-     * @param {string} arrayPath the path to the key of type Array.
-     * @param {any} predicate the object to satisfy the predicate's condition
-     */
-    removeValue(arrayPath: string, predicate: any) {
-        this.db.get(arrayPath).remove(predicate).value();
-    }
-
-    /** Pushes a value into the array field in the db.
-     * @param {string} arrayKey the key which holds the array of values
-     * @param {any} valueToPush the value to push into the array
-     */
-    pushValue(arrayKey: string, valueToPush: any) {
-        this.db.get(arrayKey).push(valueToPush).value();
-    }
-
-    /** Checks if the specified field exists in the db. 
-     * @param {string} fieldPath the field to check using the dot notation such as: key.subkey
-    */
-    checkHas(fieldPath: string): boolean {
-        return this.db.hasIn(fieldPath).value<boolean>();
-    }
-    
-    /** Returns the entire DB in its current state */
-    getEntireDB(): any {
-        this.db.getState();
-    }
-
-    /** Sets a specific value from the db.
-     * @param {string} fieldPath Search parameter specified in the format of a JSON object such as: key.subkey
-     * @param {any} value value to set the specified field with
-     */
-    setValue(fieldPath: string, value: any) {
-        this.db.set(fieldPath, value).value();
-    }
-
-    /** Gets a specific value from the db.
-     * @param {string} fieldPath Search parameter specified in the format of a JSON object such as: key.subkey
-     */
-    getValue<T>(fieldPath: string): T {
-        return this.db.get(fieldPath).value<T>();
+    public getUser(userName: string): Promise<IUserData> {
+        return new Promise<IUserData>((res, rej) => {
+            this.userModel.findOne({ userName: userName }, (err, userData) => {
+                if (userData) {
+                    userData = <IUserData>
+                        {
+                            userName: userData.userName,
+                            currencies: userData.currencies,
+                            gambling: userData.gambling,
+                            permission: userData.permission
+                        };
+                }
+                res(userData);
+            })
+        });
     }
 }
