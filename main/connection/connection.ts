@@ -1,7 +1,7 @@
 import * as tmi from 'tmi.js';
 import * as fs from 'fs';
 
-import { MessageSender, MessageBuilder } from '../functionality/messages/index';
+import { MessageSender } from '../functionality/messages/index';
 import { MessageData, MessageType, TmiOptions, Channel } from '../definitions/index';
 import { CommandHandler } from '../management/commands/index';
 import { DataBaseManager, DataBaseGenerator } from '../functionality/db/index';
@@ -21,21 +21,19 @@ export class BotConnection {
     private casinoManager: CasinoManager;
     private backupManager: BackupManager;
     private dbGenerator: DataBaseGenerator;
-
-    private welcomeMessage: string = "Hello! KAPOW I am %n MrDestructoid";
+    private welcomeMessage: string;
 
     constructor(options) {
         this.tmiOptions = options;
         this.client = new tmi.client(this.tmiOptions);
         this.channels = [];
         this.messageSender = new MessageSender(this.client, this.tmiOptions);
-        let messageBuilder = new MessageBuilder();
         let settingsManager = new SettingsManager();
         this.dbGenerator = new DataBaseGenerator();
         let cooldownManager = new CooldownManager(settingsManager, this.tmiOptions.channels);
         this.backupManager = new BackupManager();
 
-        this.welcomeMessage = messageBuilder.formatMessage(this.welcomeMessage, [this.tmiOptions.identity.username]);
+        this.welcomeMessage = `Hello! KAPOW I am ${this.tmiOptions.identity.username} MrDestructoid`;
 
         this.backupManager.startBackupInterval(1800, "main/management/users/storage", "json");
 
@@ -63,7 +61,7 @@ export class BotConnection {
         this.client.on("message", function (channel, userstate, message, self) {
 
             let messageData = new MessageData(channel, userstate, message, self);
-            
+
             if (messageData.self) return;
 
             switch (messageData.userState.messageType) {
