@@ -18,7 +18,9 @@ export class MessageSender {
 
     /**Sends a message to the specified channel */
     sendMessage(channelName: string, message: string) {
-        this.client.say(channelName, message);
+        if (message) {
+            this.client.say(channelName, message);
+        }
     }
 
     /**Sends a whisper to the specified user */
