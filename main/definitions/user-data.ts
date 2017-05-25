@@ -1,23 +1,21 @@
 import * as moment from 'moment';
-import { CurrencyData } from '../definitions/index';
+import { CurrencyData } from '../definitions';
 
 export class UserData {
     gambling: {
-        "last-gamble-time": moment.Moment;
+        time: moment.Moment;
     }
 
-    currencies: {
-        [currency: string]: CurrencyData
-    }
+    currencies: CurrencyData[];
 
     permission: number;
 
-    "display-name": string;
+    userName: string;
 
     constructor(name: string) {
-        this["display-name"] = name;
-        this.currencies = {};
+        this.userName = name;
+        this.currencies = [];
         this.permission = 1;
-        this.gambling = { "last-gamble-time": null };
+        this.gambling = { time: moment() };
     }
 }

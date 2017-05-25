@@ -1,7 +1,6 @@
 import { UserData } from './';
-import { IUser } from "./interfaces/IUser";
 
-export class User implements IUser {
+export class User {
     data: UserData;
 
     constructor(data: UserData) {

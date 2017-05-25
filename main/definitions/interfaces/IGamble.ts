@@ -1,4 +1,4 @@
-import { User } from '../../management/users/user';
+import { User } from '../';
 import { GambleData } from '../index';
 
 export interface IGamble {
