@@ -1,6 +1,6 @@
 import { Schema } from "mongoose";
 
-var commandDataSchema = new Schema({
+export var commandDataSchema = new Schema({
     name: String,
     permission: Number,
     content: String,
