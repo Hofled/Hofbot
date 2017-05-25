@@ -65,5 +65,4 @@ export class UserManager {
     updateUserData(userName: string, userData: UserData) {        
         this.dbManager.updateUser(userName, userData);
     }
-  
 }
