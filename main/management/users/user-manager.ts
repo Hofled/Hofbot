@@ -1,26 +1,49 @@
 import * as http from 'http';
 import * as lowdb from 'lowdb';
 import { Observable } from 'rxjs';
+import { TaskSequencer } from "task-sequencer";
 
 import { UserData, User } from '../../definitions';
+import { IUserData } from "../../definitions/interfaces/IUserData";
 import { DataBaseManager } from '../../functionality/db/index';
 
 export class UserManager {
     private dbManager: DataBaseManager;
-    private readonly usersFile: string = 'main/management/users/storage/users_';
+    private taskSequencer: TaskSequencer;
 
     constructor(channelName: string) {
-        this.dbManager = new DataBaseManager(this.usersFile + channelName + ".json");
+        this.dbManager = new DataBaseManager(channelName);
+        this.taskSequencer = new TaskSequencer();
     }
 
-    getUser(userName: string): User {
-        if (!this.checkUserExists(userName)) {
-            let newUser = new User(new UserData(userName));
-            this.dbManager.pushValue('users', newUser);
-            return newUser;
-        };
+    /**
+     * Async method to fetch a user instance from the DB.
+     * NOTE - 'this' context is unreachable from callback.
+     * @param userName The username of the desired user
+     * @param cb A callback function which will be called with the user object after it has been fetched from the DB
+     */
+    getUserData(userName: string, cb: (userData: IUserData) => void): void {
+        let completeObservables = this.taskSequencer.task(this.dbManager, this.dbManager.getUser, [userName]);
+        completeObservables.done.subscribe((userData: IUserData) => {
+            if (!userData) {
+                let newUser = new User(new UserData(userName));
+                userData = <IUserData>newUser.data;
+                Observable.fromPromise(this.dbManager.registerUser(newUser)).subscribe(
+                    (savedData) => {
+                        cb(savedData);
+                    },
+                    err => {
+                        console.log(`rejected promise in registerUser with error: ${err}`);
+                    });
+            }
+            else {
+                cb(userData);
+            }
+        });
 
-        return this.dbManager.findValue<User>('users', (user) => user[userName] !== undefined);
+        completeObservables.reject.subscribe((reject) => {
+            console.log(`got a reject reason of: ${reject}`)
+        })
     }
 
     getCurrentViewers(channel: string): Promise<{}> {
@@ -39,15 +62,8 @@ export class UserManager {
     }
 
     /** Updates the user data entry in the db with the passed user data */
-    updateUserData(userName: string, userData: UserData) {
-        this.dbManager.assignValue('users', (userItem) => userItem[userName] !== undefined, { userName: { data: userData } });
+    updateUserData(userName: string, userData: UserData) {        
+        this.dbManager.updateUser(userName, userData);
     }
-
-    getAllUsers(): any {
-        return this.dbManager.getEntireDB();
-    }
-
-    private checkUserExists(userName: string): boolean {
-        return this.dbManager.findValue('users', (user) => { user[userName] !== undefined }) !== undefined;
-    }
+  
 }
