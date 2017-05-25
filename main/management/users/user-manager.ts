@@ -22,7 +22,7 @@ export class UserManager {
      * @param userName The username of the desired user
      * @param cb A callback function which will be called with the user object after it has been fetched from the DB
      */
-    getUserData(userName: string, cb: (userData: IUserData) => void): void {
+    public getUserData(userName: string, cb: (userData: IUserData) => void): void {
         let completeObservables = this.taskSequencer.task(this.dbManager, this.dbManager.getUser, [userName]);
         completeObservables.done.subscribe((userData: IUserData) => {
             if (!userData) {
@@ -46,7 +46,11 @@ export class UserManager {
         })
     }
 
-    getCurrentViewers(channel: string): Promise<{}> {
+    public removeUser(userName: string): void {
+        this.dbManager.removeUser(userName);
+    }
+
+    public getCurrentViewers(channel: string): Promise<{}> {
         return new Promise((resolve, reject) => {
             http.get('http://tmi.twitch.tv/group/user/' + channel + '/chatters', (res) => {
                 res.setEncoding('utf8');
@@ -62,7 +66,7 @@ export class UserManager {
     }
 
     /** Updates the user data entry in the db with the passed user data */
-    updateUserData(userName: string, userData: UserData) {        
+    public updateUserData(userName: string, userData: UserData) {
         this.dbManager.updateUser(userName, userData);
     }
 }
