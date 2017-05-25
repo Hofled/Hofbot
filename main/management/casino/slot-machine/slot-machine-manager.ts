@@ -1,5 +1,5 @@
 import { IGamble } from '../../../definitions/interfaces/IGamble';
-import { User } from '../../users/user';
+import { User } from '../../../definitions';
 import { GambleData } from '../../../definitions/index';
 
 export class SlotMachineManager implements IGamble {
